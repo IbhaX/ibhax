@@ -18,10 +18,20 @@ tags_metadata = [
     {
         "name": "Conspiracy",
         "description": "Conspiracy world-wide"
+    },
+    {
+        "name": "Biology",
+        "description": "Medical Facts"
     }
 ]
 
-app = FastAPI(docs_url="/", openapi_tags=tags_metadata)
+app = FastAPI(
+    title="Ibha-X API",
+    version="1.0.0",
+    description="List of data scraped from various sources formatted into JSON data",
+    docs_url="/",
+    openapi_tags=tags_metadata
+)
 
 
 @app.get("/status", tags=["Status"], description="Checks status of the API server. Just returns status = Active")
@@ -53,6 +63,13 @@ def awesome_facts():
 @app.get("/conspiracy", tags=["Conspiracy"], description="Conspiracies with links for youtube video.")
 def conspiracies():
     url  = "https://raw.githubusercontent.com/IbhaX/json/main/conspiracies.json"
+    response = requests.get(url).json()
+    return response
+
+
+@app.get("/fallacy", tags=["Biology"], description="Conspiracies with links for youtube video.")
+def fallacies():
+    url  = "https://raw.githubusercontent.com/IbhaX/json/main/fallacies.json"
     response = requests.get(url).json()
     return response
 
