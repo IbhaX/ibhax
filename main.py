@@ -22,6 +22,10 @@ tags_metadata = [
     {
         "name": "Biology",
         "description": "Medical Facts"
+    },
+    {
+        "name": "Utility",
+        "description": "List of Utility Data"
     }
 ]
 
@@ -70,6 +74,19 @@ def conspiracies():
 @app.get("/fallacy", tags=["Biology"], description="Conspiracies with links for youtube video.")
 def fallacies():
     url  = "https://raw.githubusercontent.com/IbhaX/json/main/fallacies.json"
+    response = requests.get(url).json()
+    return response
+
+
+@app.get("/medical-facts", tags=["Biology"], description="List of Medical Facrs")
+def medical_facts():
+    url  = "https://raw.githubusercontent.com/IbhaX/json/main/medical_facts.json"
+    response = requests.get(url).json()
+    return response
+
+@app.get("/pincodes", tags=["Utility"], description="List of pincodes with state, district and taluk")
+def pincodes():
+    url  = "https://raw.githubusercontent.com/IbhaX/json/main/pincodes.json"
     response = requests.get(url).json()
     return response
 
