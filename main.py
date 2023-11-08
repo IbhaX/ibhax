@@ -34,7 +34,12 @@ app = FastAPI(
     version="1.0.0",
     description="List of data scraped from various sources formatted into JSON data",
     docs_url="/",
-    openapi_tags=tags_metadata
+    openapi_tags=tags_metadata,
+    contact={
+        "name": "Albin Anthony",
+        "url": "https://ibhax.github.io/",
+        "email": "dp@x-force.example.com"
+    }
 )
 
 
@@ -83,7 +88,6 @@ def medical_facts():
     url  = "https://raw.githubusercontent.com/IbhaX/json/main/medical_facts.json"
     response = requests.get(url).json()
     return response
-
 
 @app.get("/pincodes", tags=["Utility"], description="List of pincodes with state, district and taluk")
 def pincodes():
