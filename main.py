@@ -2,7 +2,7 @@ import requests
 from typing import Optional
 
 from fastapi import FastAPI
-import uvicorn
+#import uvicorn
 
 
 
@@ -21,5 +21,5 @@ def amazing_facts():
 
 
 
-if __name__ == "__main__":
-    uvicorn.run(app)
+#if __name__ == "__main__":
+#    uvicorn.run(app)
