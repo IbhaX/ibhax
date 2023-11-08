@@ -84,10 +84,11 @@ def medical_facts():
     response = requests.get(url).json()
     return response
 
+
 @app.get("/pincodes", tags=["Utility"], description="List of pincodes with state, district and taluk")
 def pincodes():
-    with open("resources/pincodes.json") as f:
-        response = json.load(f)
+    url  = "https://raw.githubusercontent.com/IbhaX/json/main/pincodes.json"
+    response = requests.get(url).json()
     return response
 
 
