@@ -1,6 +1,10 @@
+import requests
 from typing import Optional
 
 from fastapi import FastAPI
+import uvicorn
+
+
 
 app = FastAPI()
 
@@ -10,5 +14,12 @@ async def root():
     return {"message": "Ibhax API", "status": "Active"}
 
 @app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+def amazing_facts():
+    url  = "https://raw.githubusercontent.com/IbhaX/json/main/amazing_world_facts.json"
+    response = requests.get(url).json()
+    return response
+
+
+
+if __name__ == "__main__":
+    uvicorn.run(app)
