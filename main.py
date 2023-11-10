@@ -4,28 +4,26 @@ from typing import Optional
 
 from fastapi import FastAPI
 import uvicorn
+import re
+from bs4 import BeautifulSoup
+
+
+github_url = "https://github.com/IbhaX/json/blob/main/"
+
+result = requests.get(github_url)
+
+soup = BeautifulSoup(result.content, "html.parser")
+jsonfiles = soup.find_all(title=re.compile("\.json$"))
+
+filenames = [ ]
+for i in jsonfiles:
+        filenames.append(i.extract().get_text())
 
 
 tags_metadata = [
     {
-        "name": "Status",
-        "description": "Health Check - Status of the API Server"
-    },
-    {
-        "name": "Facts",
-        "description": "All kinds of Amazing Facts"
-    },
-    {
-        "name": "Conspiracy",
-        "description": "Conspiracy world-wide"
-    },
-    {
-        "name": "Biology",
-        "description": "Medical Facts"
-    },
-    {
-        "name": "Utility",
-        "description": "List of Utility Data"
+        "name": "Endpoints",
+        "description": "List of endpoints"
     }
 ]
 
@@ -43,58 +41,28 @@ app = FastAPI(
 )
 
 
-@app.get("/status", tags=["Status"], description="Checks status of the API server. Just returns status = Active")
-async def root():
-    return {"status": "Active"}
+urls = [f"https://raw.githubusercontent.com/IbhaX/json/main/{i}" for i in filenames]
 
 
-@app.get("/world-facts", tags=["Facts"], description="Amazing world facts with images")
-def world_facts():
-    url  = "https://raw.githubusercontent.com/IbhaX/json/main/amazing_world_facts.json"
-    response = requests.get(url).json()
-    return response
+def make_request(url):
+    res = requests.get(url)
+    return res.json() if res.status_code == 200 else []
 
 
-@app.get("/amazing-facts", tags=["Facts"], description="Amazing facts")
-def amazing_facts():
-    url  = "https://raw.githubusercontent.com/IbhaX/json/main/amazing_facts_128.json"
-    response = requests.get(url).json()
-    return response
+def endpoint_factory(endpoint, url):
+    @app.get(endpoint, tags=["Endpoints"])
+    def world_facts():
+        return make_request(url)
+    return world_facts
 
 
-@app.get("/awesome-facts", tags=["Facts"], description="Awesome facts")
-def awesome_facts():
-    url  = "https://raw.githubusercontent.com/IbhaX/json/main/awesome_facts.json"
-    response = requests.get(url).json()
-    return response
-
-
-@app.get("/conspiracy", tags=["Conspiracy"], description="Conspiracies with links for youtube video.")
-def conspiracies():
-    url  = "https://raw.githubusercontent.com/IbhaX/json/main/conspiracies.json"
-    response = requests.get(url).json()
-    return response
-
-
-@app.get("/fallacy", tags=["Biology"], description="Conspiracies with links for youtube video.")
-def fallacies():
-    url  = "https://raw.githubusercontent.com/IbhaX/json/main/fallacies.json"
-    response = requests.get(url).json()
-    return response
-
-
-@app.get("/medical-facts", tags=["Biology"], description="List of Medical Facrs")
-def medical_facts():
-    url  = "https://raw.githubusercontent.com/IbhaX/json/main/medical_facts.json"
-    response = requests.get(url).json()
-    return response
-
-@app.get("/pincodes", tags=["Utility"], description="List of pincodes with state, district and taluk")
-def pincodes():
-    url  = "https://raw.githubusercontent.com/IbhaX/json/main/pincodes.json"
-    response = requests.get(url).json()
-    return response
+def main():
+    for url in urls:
+        base = [i for i in url.split("/")[-1].split(".")[0].split("_") if i.isalpha()]
+        endpoint = "/" + "-".join(base)
+        endpoint_factory(endpoint, url)
 
 
 if __name__ == "__main__":
-    uvicorn.run(app)
+    main()
+    uvicorn.run(app, port=5000)
