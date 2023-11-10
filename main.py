@@ -63,6 +63,8 @@ def main():
         endpoint_factory(endpoint, url)
 
 
+main()
+
 if __name__ == "__main__":
     main()
     uvicorn.run(app, port=5000)
